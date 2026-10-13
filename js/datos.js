@@ -6,7 +6,14 @@ const CONFIG = {
   whatsapp: '',            // solo números con código de país, ej: '51987654321'
   instagram: '[@usuario]',
   tiktok: '[@usuario]',
-  ubicacion: '[Distrito, ciudad]'
+  ubicacion: '[Distrito, ciudad]',
+
+  /* PORTADA — usa UNA de estas dos opciones. Si las dos están vacías, se ve el perro estilizado.
+     A) Modelo 3D realista (.glb) generado desde una foto del perro (Meshy, Tripo):  */
+  modelo3d: '',        // ej: 'modelos/perro.glb'
+  modelo3dGiro: 0,     // grados para corregir si aparece de espaldas o de lado: 90, 180 o -90
+  /* B) Foto real del perro con el fondo quitado (.png con transparencia): */
+  fotoPortada: ''      // ej: 'img/portada.png'
 };
 
 // fotos: lista de rutas, ej: ['img/rocky-1.jpg','img/rocky-2.jpg']. Vacío = hueco de foto.

@@ -1,0 +1,3 @@
+Aquí va el modelo 3D del perro en formato .glb (idealmente menos de 10 MB).
+Ejemplo: modelos/perro.glb  ->  en js/datos.js:  modelo3d: 'modelos/perro.glb'
+Puedes borrar este archivo cuando subas el modelo.
