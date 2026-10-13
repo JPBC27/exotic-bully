@@ -8,9 +8,14 @@ const CONFIG = {
   tiktok: '[@usuario]',
   ubicacion: '[Distrito, ciudad]',
 
-  /* Registro de contactos en Google Sheet: pega aquí la URL /exec del Apps Script.
-     Vacío = no se registra nada, solo se abre WhatsApp. */
-  apiContactos: '',
+  /* Conexión con el Google Sheet: pega aquí la URL /exec del Apps Script.
+     Con esto la web registra visitas (ciudad aproximada) y contactos, y lee los cachorros
+     de la hoja "Cachorros". Vacío = no se registra nada y se usan los cachorros de abajo. */
+  api: '',
+
+  /* Panel de administración (admin.html): ID de cliente OAuth de Google.
+     Es el mismo valor que va en CLIENT_ID dentro de apps-script/Code.gs. */
+  googleClientId: '',
 
   /* PORTADA — usa UNA de estas dos opciones. Si las dos están vacías, se ve el perro estilizado.
      A) Modelo 3D realista (.glb) generado desde una foto del perro (Meshy, Tripo):  */
@@ -20,6 +25,8 @@ const CONFIG = {
   fotoPortada: ''      // ej: 'img/portada.png'
 };
 
+// RESPALDO: solo se usan si CONFIG.api está vacío o el Sheet no responde.
+// Con el Sheet conectado, los cachorros se manejan en la hoja "Cachorros" (los vendidos desaparecen solos).
 // fotos: lista de rutas, ej: ['img/rocky-1.jpg','img/rocky-2.jpg']. Vacío = hueco de foto.
 const CACHORROS = [
   { id:'c1', nombre:'[Nombre 1]', sexo:'macho',  color:'[Color]', edad:'[Semanas]', precio:'[Precio]', estado:'disponible', fotos:[], nota:'[Detalle: carácter, estructura, lo que lo hace especial.]' },

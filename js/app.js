@@ -33,15 +33,17 @@ nav.addEventListener('click', e => { if (e.target.closest('a')){ nav.classList.r
 
 /* cachorros */
 let filtro = 'todos';
+let catalogo = CONFIG.api ? null : CACHORROS;   // null = cargando desde el Sheet
 const grilla = document.getElementById('grilla');
 function pintarCachorros(){
-  const lista = CACHORROS.filter(c =>
+  if (!catalogo){ grilla.innerHTML = '<p class="vacio">Cargando cachorros…</p>'; return; }
+  const lista = catalogo.filter(c =>
     filtro === 'todos' ? true : filtro === 'disponible' ? c.estado === 'disponible' : c.sexo === filtro);
-  if (!lista.length){ grilla.innerHTML = '<p class="vacio">No hay cachorros con ese filtro por ahora. Escríbenos y te avisamos de la próxima camada.</p>'; return; }
+  if (!lista.length){ grilla.innerHTML = '<p class="vacio">No hay cachorros disponibles con ese filtro por ahora. Escríbenos y te avisamos de la próxima camada.</p>'; return; }
   grilla.innerHTML = lista.map(c => `
     <article class="card">
       <button class="card-foto" data-abrir="${c.id}" aria-label="Ver ficha de ${esc(c.nombre)}">
-        ${media(c.fotos[0], c.nombre, 'Foto del cachorro')}
+        ${media((c.fotos || [])[0], c.nombre, 'Foto del cachorro')}
         <span class="estado ${c.estado}">${c.estado === 'disponible' ? 'Disponible' : 'Reservado'}</span>
       </button>
       <div class="card-cuerpo">
@@ -69,7 +71,8 @@ document.querySelectorAll('[data-filtro]').forEach(b => b.addEventListener('clic
 /* ficha del cachorro */
 const dlg = document.getElementById('dlgCachorro');
 function abrirFicha(id){
-  const c = CACHORROS.find(x => x.id === id); if (!c) return;
+  const c = (catalogo || []).find(x => x.id === id); if (!c) return;
+  c.fotos = Array.isArray(c.fotos) ? c.fotos : [];
   const fotos = c.fotos.length ? c.fotos : ['', '', '', ''];
   dlg.innerHTML = `
     <div class="modal">
@@ -133,16 +136,14 @@ dlgV.addEventListener('close', () => { const vid = dlgV.querySelector('video'); 
 pintarCachorros();
 prepararWA();
 iniciarContacto();
+cargarCatalogo();
+registrarVisita();
 
 /* =========================================================
    Paso previo a WhatsApp: distrito (obligatorio), nombre y celular (opcionales).
-   Registra el contacto en el Google Sheet (CONFIG.apiContactos) y abre WhatsApp.
+   Registra el contacto en el Google Sheet (CONFIG.api) y abre WhatsApp.
    ========================================================= */
 function iniciarContacto(){
-  const DISTRITOS = {
-    'Lima': ['Ancón','Ate','Barranco','Breña','Carabayllo','Chaclacayo','Chorrillos','Cieneguilla','Comas','El Agustino','Independencia','Jesús María','La Molina','La Victoria','Lima (Cercado)','Lince','Los Olivos','Lurigancho-Chosica','Lurín','Magdalena del Mar','Miraflores','Pachacámac','Pucusana','Pueblo Libre','Puente Piedra','Punta Hermosa','Punta Negra','Rímac','San Bartolo','San Borja','San Isidro','San Juan de Lurigancho','San Juan de Miraflores','San Luis','San Martín de Porres','San Miguel','Santa Anita','Santa María del Mar','Santa Rosa','Santiago de Surco','Surquillo','Villa El Salvador','Villa María del Triunfo'],
-    'Callao': ['Bellavista','Callao','Carmen de la Legua Reynoso','La Perla','La Punta','Mi Perú','Ventanilla']
-  };
   const dlgC = document.getElementById('dlgContacto');
   const dlgP = document.getElementById('dlgPrivacidad');
   const form = document.getElementById('formContacto');
@@ -216,7 +217,7 @@ function iniciarContacto(){
 
     try { localStorage.setItem('rb-contacto', JSON.stringify({ distrito, provincia, nombre: nom, celular })); } catch(e){}
 
-    registrarContacto({ distrito, provincia: distrito === 'Otra provincia' ? provincia : '', nombre: nom, celular,
+    enviarAlSheet({ tipo:'contacto', distrito, provincia: distrito === 'Otra provincia' ? provincia : '', nombre: nom, celular,
       cachorro: pendiente ? pendiente.cachorro : '', origen: pendiente ? pendiente.origen : 'Otro', web: trampa.value });
 
     const lugar = distrito === 'Otra provincia' ? provincia : distrito;
@@ -232,14 +233,55 @@ function iniciarContacto(){
   });
 }
 
-function registrarContacto(datos){
-  if (!CONFIG.apiContactos) return;
+/* ---------- conexión con el Google Sheet (Apps Script) ---------- */
+function enviarAlSheet(datos){
+  if (!CONFIG.api) return;
   try {
-    fetch(CONFIG.apiContactos, {
+    fetch(CONFIG.api, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },   // texto plano: evita el preflight CORS de Apps Script
       body: JSON.stringify(datos),
       keepalive: true
     }).catch(() => {});
   } catch(e){}
+}
+
+/* catálogo vivo: disponibles y reservados de la hoja "Cachorros" (los vendidos no llegan) */
+function cargarCatalogo(){
+  if (!CONFIG.api) return;
+  fetch(CONFIG.api + '?accion=catalogo')
+    .then(r => r.json())
+    .then(d => { catalogo = (d && d.ok && Array.isArray(d.cachorros)) ? d.cachorros : CACHORROS; })
+    .catch(() => { catalogo = CACHORROS; })
+    .finally(() => pintarCachorros());
+}
+
+/* una visita por sesión: ciudad aproximada (sin guardar la IP), fuente y tipo de dispositivo */
+function registrarVisita(){
+  if (!CONFIG.api) return;
+  try { if (sessionStorage.getItem('rb-visita')) return; sessionStorage.setItem('rb-visita', '1'); } catch(e){}
+  const params = new URLSearchParams(location.search);
+  let fuente = params.get('utm_source') || '';
+  if (!fuente && document.referrer){
+    try {
+      const host = new URL(document.referrer).hostname.replace(/^www\./, '');
+      if (host !== location.hostname){
+        fuente = /instagram/.test(host) ? 'Instagram' : /facebook|fb\./.test(host) ? 'Facebook' :
+                 /tiktok/.test(host) ? 'TikTok' : /google/.test(host) ? 'Google' :
+                 /whatsapp|wa\.me/.test(host) ? 'WhatsApp' : host;
+      }
+    } catch(e){}
+  }
+  if (!fuente) fuente = 'Directo';
+  const dispositivo = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'Celular' : 'Computadora';
+  fetch('https://ipapi.co/json/')
+    .then(r => r.ok ? r.json() : {})
+    .catch(() => ({}))
+    .then(g => enviarAlSheet({
+      tipo: 'visita',
+      ciudad: (g && !g.error && g.city) || '',
+      region: (g && !g.error && g.region) || '',
+      pais: (g && !g.error && g.country_name) || '',
+      fuente, dispositivo, pagina: location.pathname
+    }));
 }

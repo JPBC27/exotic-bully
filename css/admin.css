@@ -1,0 +1,49 @@
+/* panel de administración */
+.admin .top .wrap{min-height:64px}
+.tag-admin{font-family:var(--body); font-size:12px; letter-spacing:1px; color:var(--oro); border:1px solid var(--oro); border-radius:4px; padding:2px 6px; margin-left:6px; vertical-align:middle}
+.sesion{display:flex; align-items:center; gap:12px; font-size:14px; color:var(--texto-2); min-width:0}
+.sesion span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.btn-chico{min-height:40px; padding:8px 14px; font-size:14px}
+.admin-main{padding-top:32px; padding-bottom:64px}
+.aviso{margin:0 0 20px; padding:12px 16px; border-radius:8px; border:1px solid var(--linea-2); background:var(--panel); color:var(--crema); font-size:15px}
+.aviso.ok{border-color:var(--oro)}
+.aviso.mal{border-color:#C0574A; color:#F3B8AF}
+.login{max-width:460px; margin:48px auto; text-align:center; display:flex; flex-direction:column; align-items:center; gap:16px}
+.login h1{font-size:40px}
+.login .sub{margin:0 auto}
+
+.tarjetas{display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:12px; margin-bottom:28px}
+.tarjeta{background:var(--panel); border:1px solid var(--linea); border-radius:10px; padding:16px}
+.tarjeta p{margin:0; color:var(--texto-3); font-size:14px}
+.tarjeta b{display:block; font-family:var(--display); font-weight:500; font-size:32px; margin-top:4px}
+.tarjeta.oro b{color:var(--oro)}
+
+.bloque{border-top:1px solid var(--linea); padding-top:24px; margin-top:28px}
+.bloque-cab{margin-bottom:18px}
+.bloque h2{font-size:28px}
+.bloque .sub{margin-top:4px}
+
+.horas{display:grid; grid-template-columns:repeat(24, minmax(0, 1fr)); gap:4px; align-items:end; height:180px; padding-bottom:22px; position:relative}
+.hora{position:relative; height:100%; display:flex; flex-direction:column; justify-content:flex-end; align-items:center}
+.hora i{display:block; width:100%; background:var(--oro); border-radius:3px 3px 0 0; min-height:2px}
+.hora i.cero{background:var(--linea-2)}
+.hora em{position:absolute; bottom:-20px; font-style:normal; font-size:11px; color:var(--texto-3)}
+.hora span{font-size:11px; color:var(--texto-2); margin-bottom:2px}
+@media (max-width:600px){ .hora span{display:none} .horas{gap:2px} }
+
+.lista{display:flex; flex-direction:column; gap:10px}
+.item{display:flex; flex-wrap:wrap; align-items:center; gap:12px 16px; border:1px solid var(--linea); border-radius:10px; padding:14px 16px; background:var(--negro)}
+.item-info{flex:1 1 220px; min-width:0}
+.item-info h3{font-size:22px; font-weight:500}
+.item-info p{margin:2px 0 0; color:var(--texto-3); font-size:14px}
+.item-info .precio-item{color:var(--oro); font-weight:700}
+.segmento{display:flex; border:1px solid var(--linea-2); border-radius:8px; overflow:hidden}
+.segmento button{min-height:44px; padding:8px 12px; border:0; background:transparent; color:var(--texto-2); font:500 14px var(--body); cursor:pointer}
+.segmento button + button{border-left:1px solid var(--linea-2)}
+.segmento button[aria-pressed="true"]{background:var(--oro); color:var(--negro)}
+.segmento button:disabled{cursor:wait; opacity:.6}
+.item .btn{min-height:44px; padding:8px 16px; font-size:14px}
+.item.vendido{opacity:.75}
+.vacio-lista{color:var(--texto-3); font-size:15px; padding:16px; border:1px dashed var(--linea-2); border-radius:10px}
+.calculo{margin:-4px 0 0; font-size:15px; color:var(--texto-2)}
+.calculo b{color:var(--oro)}
