@@ -1,0 +1,3 @@
+Aquí van las fotos (jpg o webp, idealmente menos de 500 KB cada una).
+Ejemplo: img/rocky-1.jpg  ->  en js/datos.js:  fotos:[\x27img/rocky-1.jpg\x27]
+Puedes borrar este archivo cuando subas las fotos.

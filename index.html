@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cachorros exotic bully</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="marca" href="#inicio" aria-label="Inicio">
+      <span class="logo-hueco" aria-hidden="true">Logo</span>
+      <b data-marca>[Nombre del criadero]</b>
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav" aria-label="Abrir menú">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="nav" id="nav" aria-label="Principal">
+      <a href="#cachorros">Cachorros</a>
+      <a href="#padres">Padres</a>
+      <a href="#videos">Videos</a>
+      <a href="#proceso">Cómo comprar</a>
+      <a class="btn btn-oro" data-wa="Hola, quiero información sobre los cachorros exotic bully." href="#">Escríbenos por WhatsApp</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="inicio">
+    <div class="wrap">
+      <div>
+        <p class="lugar">Exotic bully en [ciudad]</p>
+        <h1>Cachorros exotic bully con estructura y carácter</h1>
+        <p>[Frase corta sobre la crianza: cómo se crían, con qué cuidados, qué los hace distintos.]</p>
+        <div class="acciones">
+          <a class="btn btn-oro" href="#cachorros">Ver cachorros disponibles</a>
+          <a class="btn btn-linea" href="#videos">Ver videos</a>
+        </div>
+      </div>
+      <div class="hero-foto escena" id="escena" role="img" aria-label="Perro exotic bully en 3D que sigue el cursor"><canvas id="canvas3d"></canvas></div>
+    </div>
+  </section>
+
+  <section class="banda" id="cachorros">
+    <div class="wrap seccion">
+      <div class="cabecera">
+        <div>
+          <h2>Cachorros disponibles</h2>
+          <p class="sub">Toca una foto para ver la ficha completa, más fotos y escribirnos por ese cachorro.</p>
+        </div>
+        <div class="filtros" role="group" aria-label="Filtrar cachorros">
+          <button class="chip" data-filtro="todos" aria-pressed="true">Todos</button>
+          <button class="chip" data-filtro="disponible" aria-pressed="false">Disponibles</button>
+          <button class="chip" data-filtro="macho" aria-pressed="false">Machos</button>
+          <button class="chip" data-filtro="hembra" aria-pressed="false">Hembras</button>
+        </div>
+      </div>
+      <div class="grilla" id="grilla" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section id="padres">
+    <div class="wrap seccion">
+      <div class="cabecera"><h2>Padres de la camada</h2></div>
+      <div class="padres" id="padres-lista"></div>
+    </div>
+  </section>
+
+  <section class="banda" id="videos">
+    <div class="wrap seccion">
+      <div class="cabecera">
+        <div>
+          <h2>Videos</h2>
+          <p class="sub">Así se mueven y juegan. Te mandamos más por WhatsApp si quieres ver a uno en particular.</p>
+        </div>
+      </div>
+      <div class="videos" id="videos-lista"></div>
+    </div>
+  </section>
+
+  <section id="proceso">
+    <div class="wrap seccion">
+      <div class="cabecera"><h2>Cómo comprar</h2></div>
+      <ol class="pasos">
+        <li><h3>Elige tu cachorro</h3><p>Revisa fotos, videos y la ficha de cada uno.</p></li>
+        <li><h3>Escríbenos</h3><p>Por WhatsApp te mandamos más videos y resolvemos tus dudas.</p></li>
+        <li><h3>Sepáralo</h3><p>[Monto de separación y condiciones.]</p></li>
+        <li><h3>Recíbelo</h3><p>[Qué incluye la entrega: vacunas, desparasitación, carnet, pedigree…]</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="banda contacto" id="contacto">
+    <div class="wrap seccion">
+      <div style="flex:1 1 420px; min-width:0">
+        <h2>¿Te interesa un cachorro?</h2>
+        <p class="sub" style="font-size:18px; margin:16px 0 28px">Escríbenos y te respondemos con fotos, videos y disponibilidad.</p>
+        <a class="btn btn-oro" style="font-size:18px; min-height:56px; padding:14px 30px" data-wa="Hola, quiero información sobre los cachorros exotic bully." href="#">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.3z"/></svg>
+          Escribir por WhatsApp
+        </a>
+      </div>
+      <dl class="redes">
+        <div><dt>Instagram</dt><dd data-cfg="instagram"></dd></div>
+        <div><dt>TikTok</dt><dd data-cfg="tiktok"></dd></div>
+        <div><dt>Ubicación</dt><dd data-cfg="ubicacion"></dd></div>
+      </dl>
+    </div>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="wrap">
+    <span>© <span id="anio"></span> <span data-marca>[Nombre del criadero]</span></span>
+    <span>Exotic bully en [ciudad]</span>
+  </div>
+</footer>
+
+<a class="wa-flotante" data-wa="Hola, quiero información sobre los cachorros exotic bully." href="#" aria-label="Escribir por WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#121212" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.3z"/></svg>
+</a>
+
+<dialog id="dlgCachorro" aria-labelledby="dlgTitulo"></dialog>
+<dialog id="dlgVideo" aria-label="Video"></dialog>
+
+<script src="js/datos.js"></script>
+<script src="js/app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/perro3d.js"></script>
+</body>
+</html>

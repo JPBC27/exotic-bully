@@ -1,0 +1,3 @@
+Aquí van los videos verticales en .mp4, comprimidos a menos de 10 MB cada uno.
+Ejemplo: videos/camada.mp4  ->  en js/datos.js:  video:\x27videos/camada.mp4\x27
+Puedes borrar este archivo cuando subas los videos.
