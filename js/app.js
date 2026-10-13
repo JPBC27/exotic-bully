@@ -54,7 +54,7 @@ function pintarCachorros(){
         </dl>
         <div class="acciones">
           <button class="btn btn-linea" data-abrir="${c.id}">Ver ficha</button>
-          <a class="btn btn-borde-oro" data-wa="Hola, me interesa ${esc(c.nombre)} (${sexoTxt(c.sexo).toLowerCase()}, ${esc(c.color)}). ¿Sigue disponible?" href="#">WhatsApp</a>
+          <a class="btn btn-borde-oro" data-cachorro="${esc(c.nombre)}" data-wa="Hola, me interesa ${esc(c.nombre)} (${sexoTxt(c.sexo).toLowerCase()}, ${esc(c.color)}). ¿Sigue disponible?" href="#">WhatsApp</a>
         </div>
       </div>
     </article>`).join('');
@@ -90,7 +90,7 @@ function abrirFicha(id){
           <dt>Precio</dt><dd class="precio">${esc(c.precio)}</dd>
         </dl>
         <p class="nota">${esc(c.nota)}</p>
-        <a class="btn btn-oro" style="margin-top:auto" data-wa="Hola, me interesa ${esc(c.nombre)} (${sexoTxt(c.sexo).toLowerCase()}, ${esc(c.color)}). ¿Sigue disponible?" href="#">
+        <a class="btn btn-oro" style="margin-top:auto" data-cachorro="${esc(c.nombre)}" data-wa="Hola, me interesa ${esc(c.nombre)} (${sexoTxt(c.sexo).toLowerCase()}, ${esc(c.color)}). ¿Sigue disponible?" href="#">
           ${c.estado === 'disponible' ? 'Consultar por WhatsApp' : 'Avisarme si se libera'}
         </a>
       </div>
@@ -132,3 +132,114 @@ dlgV.addEventListener('close', () => { const vid = dlgV.querySelector('video'); 
 
 pintarCachorros();
 prepararWA();
+iniciarContacto();
+
+/* =========================================================
+   Paso previo a WhatsApp: distrito (obligatorio), nombre y celular (opcionales).
+   Registra el contacto en el Google Sheet (CONFIG.apiContactos) y abre WhatsApp.
+   ========================================================= */
+function iniciarContacto(){
+  const DISTRITOS = {
+    'Lima': ['Ancón','Ate','Barranco','Breña','Carabayllo','Chaclacayo','Chorrillos','Cieneguilla','Comas','El Agustino','Independencia','Jesús María','La Molina','La Victoria','Lima (Cercado)','Lince','Los Olivos','Lurigancho-Chosica','Lurín','Magdalena del Mar','Miraflores','Pachacámac','Pucusana','Pueblo Libre','Puente Piedra','Punta Hermosa','Punta Negra','Rímac','San Bartolo','San Borja','San Isidro','San Juan de Lurigancho','San Juan de Miraflores','San Luis','San Martín de Porres','San Miguel','Santa Anita','Santa María del Mar','Santa Rosa','Santiago de Surco','Surquillo','Villa El Salvador','Villa María del Triunfo'],
+    'Callao': ['Bellavista','Callao','Carmen de la Legua Reynoso','La Perla','La Punta','Mi Perú','Ventanilla']
+  };
+  const dlgC = document.getElementById('dlgContacto');
+  const dlgP = document.getElementById('dlgPrivacidad');
+  const form = document.getElementById('formContacto');
+  const sel = document.getElementById('cDistrito');
+  const prov = document.getElementById('cProvincia'), lblProv = document.getElementById('lblProvincia');
+  const nombre = document.getElementById('cNombre'), cel = document.getElementById('cCelular');
+  const trampa = document.getElementById('cWeb');
+  const interes = document.getElementById('contactoInteres');
+  const errores = { distrito: document.getElementById('errDistrito'), provincia: document.getElementById('errProvincia'), celular: document.getElementById('errCelular') };
+
+  sel.innerHTML = '<option value="">Elige tu distrito</option>' +
+    Object.entries(DISTRITOS).map(([g, lista]) => `<optgroup label="${g}">${lista.map(d => `<option>${d}</option>`).join('')}</optgroup>`).join('') +
+    '<option value="Otra provincia">Otra provincia o ciudad</option>';
+
+  /* recordar lo que la persona ya llenó, solo en su propio navegador */
+  try {
+    const previo = JSON.parse(localStorage.getItem('rb-contacto') || '{}');
+    if (previo.distrito) sel.value = previo.distrito;
+    if (previo.provincia) prov.value = previo.provincia;
+    if (previo.nombre) nombre.value = previo.nombre;
+    if (previo.celular) cel.value = previo.celular;
+  } catch(e){}
+  const verProvincia = () => { lblProv.hidden = sel.value !== 'Otra provincia'; };
+  verProvincia();
+
+  const ocultar = k => { errores[k].hidden = true; };
+  sel.addEventListener('change', () => { ocultar('distrito'); ocultar('provincia'); verProvincia(); });
+  prov.addEventListener('input', () => ocultar('provincia'));
+  cel.addEventListener('input', () => ocultar('celular'));
+
+  let pendiente = null;
+  const origenDe = a =>
+    a.closest('#dlgCachorro') ? 'Ficha de cachorro' :
+    a.closest('.card') ? 'Tarjeta de cachorro' :
+    a.classList.contains('wa-flotante') ? 'Botón flotante' :
+    a.closest('.top') ? 'Encabezado' :
+    a.closest('#contacto') ? 'Sección contacto' : 'Otro';
+
+  document.addEventListener('click', e => {
+    const a = e.target.closest('[data-wa]');
+    if (!a) return;
+    e.preventDefault();
+    pendiente = { mensaje: a.dataset.wa, cachorro: a.dataset.cachorro || '', origen: origenDe(a) };
+    interes.hidden = !pendiente.cachorro;
+    interes.textContent = pendiente.cachorro ? 'Consulta por ' + pendiente.cachorro : '';
+    Object.values(errores).forEach(x => x.hidden = true);
+    dlgC.showModal();
+    sel.focus();
+  });
+
+  dlgC.querySelector('[data-cerrar]').addEventListener('click', () => dlgC.close());
+  document.querySelectorAll('[data-privacidad]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); dlgP.showModal(); }));
+  dlgP.querySelector('[data-cerrar]').addEventListener('click', () => dlgP.close());
+  [dlgC, dlgP].forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const distrito = sel.value;
+    const provincia = prov.value.trim();
+    const nom = nombre.value.trim();
+    const celular = cel.value.replace(/[^\d+]/g, '');
+    let ok = true;
+    if (!distrito){ errores.distrito.hidden = false; ok = false; }
+    if (distrito === 'Otra provincia' && !provincia){ errores.provincia.hidden = false; ok = false; }
+    const digitos = celular.replace(/\D/g, '');
+    if (celular && (digitos.length < 9 || digitos.length > 12)){ errores.celular.hidden = false; ok = false; }
+    if (!ok){
+      (!errores.distrito.hidden ? sel : !errores.provincia.hidden ? prov : cel).focus();
+      return;
+    }
+
+    try { localStorage.setItem('rb-contacto', JSON.stringify({ distrito, provincia, nombre: nom, celular })); } catch(e){}
+
+    registrarContacto({ distrito, provincia: distrito === 'Otra provincia' ? provincia : '', nombre: nom, celular,
+      cachorro: pendiente ? pendiente.cachorro : '', origen: pendiente ? pendiente.origen : 'Otro', web: trampa.value });
+
+    const lugar = distrito === 'Otra provincia' ? provincia : distrito;
+    const base = (pendiente ? pendiente.mensaje : 'Hola, quiero información sobre los cachorros exotic bully.').replace(/^Hola,?\s*/i, '');
+    const resto = base.charAt(0).toUpperCase() + base.slice(1);
+    const mensaje = `Hola${nom ? ', soy ' + nom : ''}, te escribo desde ${lugar}. ${resto}`;
+
+    dlgC.close();
+    const dlgCach = document.getElementById('dlgCachorro');
+    if (dlgCach.open) dlgCach.close();
+    if (CONFIG.whatsapp) window.open(linkWA(mensaje), '_blank', 'noopener');
+    else location.hash = 'contacto';
+  });
+}
+
+function registrarContacto(datos){
+  if (!CONFIG.apiContactos) return;
+  try {
+    fetch(CONFIG.apiContactos, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },   // texto plano: evita el preflight CORS de Apps Script
+      body: JSON.stringify(datos),
+      keepalive: true
+    }).catch(() => {});
+  } catch(e){}
+}

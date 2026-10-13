@@ -2,11 +2,15 @@
    EDITA AQUÍ — todo el contenido de la web sale de estos datos
    ========================================================= */
 const CONFIG = {
-  marca: '[Nombre del criadero]',
+  marca: 'RiverBulls',
   whatsapp: '',            // solo números con código de país, ej: '51987654321'
   instagram: '[@usuario]',
   tiktok: '[@usuario]',
   ubicacion: '[Distrito, ciudad]',
+
+  /* Registro de contactos en Google Sheet: pega aquí la URL /exec del Apps Script.
+     Vacío = no se registra nada, solo se abre WhatsApp. */
+  apiContactos: '',
 
   /* PORTADA — usa UNA de estas dos opciones. Si las dos están vacías, se ve el perro estilizado.
      A) Modelo 3D realista (.glb) generado desde una foto del perro (Meshy, Tripo):  */
