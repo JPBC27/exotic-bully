@@ -285,3 +285,73 @@ function registrarVisita(){
       fuente, dispositivo, pagina: location.pathname
     }));
 }
+
+/* ---------- trayectoria, competencias, entregas y reseñas (datos en js/datos.js) ---------- */
+(function(){
+  const lista = v => Array.isArray(v) ? v : [];
+  const T = typeof TRAYECTORIA !== 'undefined' ? TRAYECTORIA : null;
+  const competencias = typeof COMPETENCIAS !== 'undefined' ? lista(COMPETENCIAS) : [];
+  const entregas = typeof ENTREGAS !== 'undefined' ? lista(ENTREGAS) : [];
+  const resenas = typeof RESENAS !== 'undefined' ? lista(RESENAS) : [];
+  const ocultar = (id, si) => { const el = document.getElementById(id); if (el) el.hidden = si; };
+
+  /* trayectoria: los años se calculan con el año actual */
+  if (T){
+    const anios = T.desde ? new Date().getFullYear() - Number(T.desde) : null;
+    const primera = anios === null
+      ? { valor: '[X]', texto: 'años criando' }
+      : anios < 1 ? { valor: 'Primer', texto: 'año criando' }
+      : { valor: anios, texto: anios === 1 ? 'año criando' : 'años criando' };
+    document.getElementById('trayHistoria').textContent = T.historia || '';
+    document.getElementById('trayCifras').innerHTML = [primera].concat(lista(T.cifras))
+      .map(c => `<div class="cifra"><b>${esc(c.valor)}</b><span>${esc(c.texto)}</span></div>`).join('');
+  } else ocultar('trayectoria', true);
+
+  const fotoBoton = (foto, alt, textoHueco, caption) => foto
+    ? `<button class="foto-btn" data-foto="${esc(foto)}" data-caption="${esc(caption)}" aria-label="Ampliar foto: ${esc(alt)}"><img class="foto" src="${esc(foto)}" alt="${esc(alt)}" loading="lazy"></button>`
+    : hueco(textoHueco);
+
+  /* competencias */
+  document.getElementById('competencias').innerHTML = competencias.map(c => `
+    <figure class="logro">
+      <div class="logro-foto">${fotoBoton(c.foto, c.evento, 'Foto de la competencia', `${c.resultado} · ${c.evento} ${c.anio}`)}</div>
+      <figcaption><b>${esc(c.resultado)}</b><span>${esc(c.evento)} · ${esc(c.anio)}</span></figcaption>
+    </figure>`).join('');
+  ocultar('bloqueCompetencias', !competencias.length);
+
+  /* entregas */
+  document.getElementById('entregas').innerHTML = entregas.map(e => `
+    <figure class="entrega">
+      <div class="entrega-foto">${fotoBoton(e.foto, `${e.perro} con ${e.familia}`, 'Foto del perro con su familia', `${e.perro} con ${e.familia}, ${e.distrito}`)}</div>
+      <figcaption><b>${esc(e.perro)}</b><span>Con ${esc(e.familia)} · ${esc(e.distrito)}</span></figcaption>
+    </figure>`).join('');
+  ocultar('bloqueEntregas', !entregas.length);
+
+  /* reseñas */
+  document.getElementById('resenas').innerHTML = resenas.map(r => {
+    const n = Math.max(1, Math.min(5, Math.round(Number(r.estrellas) || 5)));
+    return `
+    <figure class="resena">
+      <p class="estrellas" role="img" aria-label="${n} de 5 estrellas">${'★'.repeat(n)}<span>${'★'.repeat(5 - n)}</span></p>
+      <blockquote>${esc(r.texto)}</blockquote>
+      <figcaption><b>${esc(r.nombre)}</b><span>${esc(r.distrito)}${r.perro ? ' · dueño de ' + esc(r.perro) : ''}</span></figcaption>
+    </figure>`;
+  }).join('');
+  ocultar('bloqueResenas', !resenas.length);
+
+  if (!entregas.length && !resenas.length){ ocultar('clientes', true); ocultar('navClientes', true); }
+
+  /* foto ampliada */
+  const dlgF = document.getElementById('dlgFoto');
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-foto]'); if (!b) return;
+    dlgF.innerHTML = `<div class="modal-foto">
+        <button class="cerrar" aria-label="Cerrar foto"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        <img src="${esc(b.dataset.foto)}" alt="${esc(b.dataset.caption)}">
+        <p>${esc(b.dataset.caption)}</p>
+      </div>`;
+    dlgF.querySelector('.cerrar').addEventListener('click', () => dlgF.close());
+    dlgF.showModal();
+  });
+  dlgF.addEventListener('click', e => { if (e.target === dlgF) dlgF.close(); });
+})();

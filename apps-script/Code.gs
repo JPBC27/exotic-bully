@@ -13,7 +13,7 @@
  */
 
 const SHEET_ID = '1NJJxItkdajb1KysfznUY3yKRJLe__xFlZhCX96bDj3I';
-const CLIENT_ID = '';            // ID de cliente OAuth de Google (termina en .apps.googleusercontent.com). El mismo que va en datos.js
+const CLIENT_ID = '348391653305-0jkl3q0b5ce0fq1vuf6i9huikte93snc.apps.googleusercontent.com';   // ID de cliente OAuth de Google. El mismo que va en datos.js
 const MONEDA = 'S/ ';            // cambia a 'US$ ' si vendes en dólares
 const ZONA = 'America/Lima';
 
@@ -22,7 +22,7 @@ const COL = {
   visitas:   ['Fecha', 'Ciudad', 'Región', 'País', 'Fuente', 'Dispositivo', 'Página'],
   contactos: ['Fecha', 'Distrito', 'Provincia', 'Nombre', 'Celular', 'Cachorro', 'Origen', 'Estado', 'Notas'],
   cachorros: ['ID', 'Nombre', 'Sexo', 'Color', 'Edad', 'Precio publicado', 'Estado', 'Fotos', 'Nota', 'Costo', 'Fecha de venta'],
-  ventas:    ['Fecha', 'ID cachorro', 'Cachorro', 'Comprador', 'Celular', 'Distrito', 'Precio de venta', 'Costo', 'Otros gastos', 'Ganancia', 'Notas', 'Precio publicado', 'Descuento', 'Registrado por'],
+  ventas:    ['Fecha', 'ID cachorro', 'Cachorro', 'Comprador', 'Celular', 'Distrito', 'Precio de venta', 'Costo', 'Otros gastos', 'Ganancia', 'Notas', 'Precio publicado', 'Descuento', 'Registrado por', 'Sexo', 'Color'],
   admins:    ['Correo', 'Nombre', 'Rol', 'Activo']
 };
 const ESTADOS_CONTACTO = ['Nuevo', 'Escribió', 'Interesado', 'Separó', 'Compró', 'No respondió', 'Descartado'];
@@ -130,8 +130,20 @@ function configurar() {
   r.getRange('O2').setFormula('=IFERROR(QUERY(Visitas!A2:A, "select dayOfWeek(A), count(A) where A is not null group by dayOfWeek(A) order by dayOfWeek(A) label dayOfWeek(A) \'Día\', count(A) \'Visitas\'", 0), "Sin visitas todavía")');
   r.getRange('O1').setNote('Día: 1 = domingo, 2 = lunes … 7 = sábado');
 
-  r.getRange('A2:P2').setFontWeight('bold');
-  r.setColumnWidths(1, 16, 120);
+  titulo('R1', 'Ventas por color');
+  r.getRange('R2').setFormula('=IFERROR(QUERY(Ventas!A2:P, "select P, count(A), sum(G), avg(G), sum(J) where A is not null group by P order by count(A) desc label P \'Color\', count(A) \'Vendidos\', sum(G) \'Total vendido\', avg(G) \'Precio promedio\', sum(J) \'Ganancia\'", 0), "Sin ventas todavía")');
+  r.getRange('T3:V').setNumberFormat(formatoMoneda);
+
+  titulo('X1', 'Ventas por sexo');
+  r.getRange('X2').setFormula('=IFERROR(QUERY(Ventas!A2:P, "select O, count(A), sum(G), avg(G), sum(J) where A is not null group by O order by count(A) desc label O \'Sexo\', count(A) \'Vendidos\', sum(G) \'Total vendido\', avg(G) \'Precio promedio\', sum(J) \'Ganancia\'", 0), "Sin ventas todavía")');
+  r.getRange('Z3:AB').setNumberFormat(formatoMoneda);
+
+  titulo('AD1', 'Ventas por mes');
+  r.getRange('AD2').setFormula('=IFERROR(QUERY(Ventas!A2:P, "select year(A), month(A)+1, count(A), sum(G), sum(J) where A is not null group by year(A), month(A)+1 order by year(A), month(A)+1 label year(A) \'Año\', month(A)+1 \'Mes\', count(A) \'Vendidos\', sum(G) \'Total vendido\', sum(J) \'Ganancia\'", 0), "Sin ventas todavía")');
+  r.getRange('AG3:AH').setNumberFormat(formatoMoneda);
+
+  r.getRange('A2:AH2').setFontWeight('bold');
+  r.setColumnWidths(1, 34, 120);
   r.setColumnWidth(9, 220);
 }
 
@@ -312,7 +324,8 @@ function venderCachorro(v, quien) {
     ve.getRange(fila, 1, 1, COL.ventas.length).setValues([[
       new Date(), id, c.nombre, limpiar(v.comprador, 60), limpiar(v.celular, 16), limpiar(v.distrito, 60),
       precio, costo, gastos, '=G' + fila + '-H' + fila + '-I' + fila, limpiar(v.notas, 200),
-      publicado, descuento, limpiar(quien, 80)
+      publicado, descuento, limpiar(quien, 80),
+      c.sexo === 'hembra' ? 'Hembra' : 'Macho', limpiar(c.color, 40)
     ]]);
   });
   CacheService.getScriptCache().remove('catalogo');

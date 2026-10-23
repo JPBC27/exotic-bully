@@ -15,14 +15,14 @@ const CONFIG = {
 
   /* Panel de administración (admin.html): ID de cliente OAuth de Google.
      Es el mismo valor que va en CLIENT_ID dentro de apps-script/Code.gs. */
-  googleClientId: '',
+  googleClientId: '348391653305-0jkl3q0b5ce0fq1vuf6i9huikte93snc.apps.googleusercontent.com',
 
   /* PORTADA — usa UNA de estas dos opciones. Si las dos están vacías, se ve el perro estilizado.
      A) Modelo 3D realista (.glb) generado desde una foto del perro (Meshy, Tripo):  */
   modelo3d: '',        // ej: 'modelos/perro.glb'
   modelo3dGiro: 0,     // grados para corregir si aparece de espaldas o de lado: 90, 180 o -90
   /* B) Foto real del perro con el fondo quitado (.png con transparencia): */
-  fotoPortada: ''      // ej: 'img/portada.png'
+  fotoPortada: 'img/logo.webp'      // ej: 'img/portada.png'
 };
 
 // RESPALDO: solo se usan si CONFIG.api está vacío o el Sheet no responde.
@@ -45,5 +45,41 @@ const VIDEOS = [
   { titulo:'Cachorros jugando', video:'' },
   { titulo:'Padres caminando', video:'' },
   { titulo:'Un cachorro de cerca', video:'' }
+];
+
+/* TRAYECTORIA — desde: año en que empezaron a criar (ej. 2018). Los años se calculan solos cada año.
+   0 = se muestra [X] hasta que lo completes. Las cifras extra son opcionales: borra las que no tengas. */
+const TRAYECTORIA = {
+  desde: 0,
+  historia: '[Cuenta en 2 o 3 líneas cómo empezó el criadero, qué líneas trabajan y qué buscan en cada camada.]',
+  cifras: [
+    { valor:'[X]', texto:'camadas' },
+    { valor:'[X]', texto:'cachorros entregados' },
+    { valor:'[X]', texto:'premios en competencias' }
+  ]
+};
+
+/* COMPETENCIAS — foto: ruta en img/ (ej. 'img/competencia-2025.jpg'). Lista vacía [] = se oculta la sección. */
+const COMPETENCIAS = [
+  { foto:'', evento:'[Nombre del evento]', anio:'[Año]', resultado:'[Premio o puesto]' },
+  { foto:'', evento:'[Nombre del evento]', anio:'[Año]', resultado:'[Premio o puesto]' },
+  { foto:'', evento:'[Nombre del evento]', anio:'[Año]', resultado:'[Premio o puesto]' }
+];
+
+/* ENTREGAS — fotos de perros ya entregados. Pide permiso al dueño antes de publicar su foto.
+   Lista vacía [] = se oculta. */
+const ENTREGAS = [
+  { foto:'', perro:'[Nombre del perro]', familia:'[Nombre de la familia]', distrito:'[Distrito]' },
+  { foto:'', perro:'[Nombre del perro]', familia:'[Nombre de la familia]', distrito:'[Distrito]' },
+  { foto:'', perro:'[Nombre del perro]', familia:'[Nombre de la familia]', distrito:'[Distrito]' },
+  { foto:'', perro:'[Nombre del perro]', familia:'[Nombre de la familia]', distrito:'[Distrito]' }
+];
+
+/* RESEÑAS — solo reseñas reales, con permiso del cliente para publicarlas. estrellas: de 1 a 5.
+   Lista vacía [] = se oculta. */
+const RESENAS = [
+  { nombre:'[Nombre]', distrito:'[Distrito]', estrellas:5, perro:'[Nombre del perro]', texto:'[Lo que dijo el cliente sobre su cachorro y la atención.]' },
+  { nombre:'[Nombre]', distrito:'[Distrito]', estrellas:5, perro:'[Nombre del perro]', texto:'[Lo que dijo el cliente sobre su cachorro y la atención.]' },
+  { nombre:'[Nombre]', distrito:'[Distrito]', estrellas:5, perro:'[Nombre del perro]', texto:'[Lo que dijo el cliente sobre su cachorro y la atención.]' }
 ];
 /* ========================================================= */

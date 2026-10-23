@@ -27,6 +27,9 @@ h2{font-size:clamp(34px,5vw,48px)}
 .marca{display:flex; align-items:center; gap:12px; color:var(--crema); text-decoration:none}
 .marca:hover{color:var(--crema)}
 .logo-hueco{width:44px; height:44px; border:1px dashed var(--oro); border-radius:50%; display:grid; place-items:center; font-size:10px; color:var(--oro); flex:none}
+.marca .logo{height:58px; width:auto; flex:none}
+.marca.con-logo [data-marca]{display:none}
+@media (max-width:600px){ .marca .logo{height:48px} }
 .marca b{font-family:var(--display); font-weight:500; font-size:20px; letter-spacing:1.5px; text-transform:uppercase}
 .nav{display:flex; align-items:center; gap:28px}
 .nav a:not(.btn){color:#D6D0C7; text-decoration:none; font-size:15px}
@@ -151,6 +154,10 @@ dialog::backdrop{background:rgba(0,0,0,.75)}
 .escena .foto-3d{position:absolute; left:6%; right:6%; top:6%; bottom:9%; width:88%; height:85%; object-fit:contain; object-position:center bottom; filter:drop-shadow(0 28px 26px rgba(0,0,0,.55)); will-change:transform; transform-origin:50% 90%}
 .escena .sombra-piso{position:absolute; left:18%; right:18%; bottom:6%; height:7%; border-radius:50%; background:radial-gradient(closest-side, rgba(0,0,0,.6), rgba(0,0,0,0)); will-change:transform}
 .escena.con-foto canvas{display:none}
+/* cuando la portada es el logo (horizontal): sin marco, proporción del logo y sin sombra de piso */
+.hero-foto.escena.con-foto{aspect-ratio:5/4; border-color:transparent}
+.escena.con-foto .foto-3d{left:2%; right:2%; top:2%; bottom:2%; width:96%; height:96%; object-position:center; transform-origin:50% 50%; filter:drop-shadow(0 18px 30px rgba(0,0,0,.6))}
+.escena.con-foto .sombra-piso{display:none}
 .escena .cargando{position:absolute; inset:auto 0 12px; text-align:center; color:var(--texto-3); font-size:13px}
 
 /* paso previo a WhatsApp */
@@ -172,3 +179,41 @@ dialog::backdrop{background:rgba(0,0,0,.75)}
 .form-contacto .btn{margin-top:4px; width:100%}
 .privacidad{margin:0; color:var(--texto-3); font-size:13px; text-align:center}
 .texto-legal p{margin:0; color:var(--texto-2); font-size:15px}
+
+/* trayectoria */
+.trayectoria{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:40px; align-items:center}
+.tray-historia{margin:16px 0 0; color:var(--texto-2); font-size:18px; max-width:560px}
+.cifras{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px}
+.cifra{border:1px solid var(--linea); border-top:2px solid var(--oro); border-radius:10px; padding:18px; background:var(--negro)}
+.cifra b{display:block; font-family:var(--display); font-weight:600; font-size:44px; line-height:1; color:var(--oro)}
+.cifra span{display:block; margin-top:6px; color:var(--texto-2); font-size:15px}
+@media (max-width:860px){ .trayectoria{grid-template-columns:1fr; gap:28px} }
+.subtitulo{font-size:26px; margin:56px 0 20px}
+
+/* competencias y entregas */
+.galeria-logros{display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:20px}
+.entregas{display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:16px}
+.logro, .entrega{margin:0; border:1px solid var(--linea); border-radius:10px; overflow:hidden; background:var(--negro)}
+.logro-foto{aspect-ratio:4/3}
+.entrega-foto{aspect-ratio:1/1}
+.logro-foto .hueco, .entrega-foto .hueco{height:100%; border:0; border-bottom:1px dashed var(--linea-2)}
+.foto-btn{display:block; width:100%; height:100%; padding:0; border:0; background:none; cursor:zoom-in}
+.logro figcaption, .entrega figcaption{padding:14px 16px; display:flex; flex-direction:column; gap:2px}
+.logro figcaption b{color:var(--oro); font-size:16px}
+.entrega figcaption b{font-family:var(--display); font-weight:500; font-size:20px; text-transform:uppercase}
+.logro figcaption span, .entrega figcaption span{color:var(--texto-3); font-size:14px}
+
+/* reseñas */
+.resenas{display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:20px}
+.resena{margin:0; border:1px solid var(--linea); border-radius:10px; padding:22px; background:var(--negro); display:flex; flex-direction:column; gap:12px}
+.estrellas{margin:0; color:var(--oro); font-size:20px; letter-spacing:2px}
+.estrellas span{color:var(--linea-2)}
+.resena blockquote{margin:0; color:var(--crema); font-size:16px; flex-grow:1}
+.resena figcaption{display:flex; flex-direction:column; gap:2px; border-top:1px solid var(--linea); padding-top:12px}
+.resena figcaption span{color:var(--texto-3); font-size:14px}
+
+/* foto ampliada */
+#dlgFoto{width:min(960px, calc(100% - 24px))}
+.modal-foto{position:relative; padding:12px}
+.modal-foto img{width:100%; max-height:78vh; object-fit:contain; border-radius:8px; background:var(--carbon)}
+.modal-foto p{margin:10px 4px 2px; color:var(--texto-2); font-size:15px}
