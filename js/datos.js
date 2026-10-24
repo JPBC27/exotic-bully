@@ -11,7 +11,7 @@ const CONFIG = {
   /* Conexión con el Google Sheet: pega aquí la URL /exec del Apps Script.
      Con esto la web registra visitas (ciudad aproximada) y contactos, y lee los cachorros
      de la hoja "Cachorros". Vacío = no se registra nada y se usan los cachorros de abajo. */
-  api: '',
+  api: 'https://script.google.com/macros/s/AKfycbw2ZRz6-RV8AssqVeIwG8iDB85kb9uFJo0z1IFa7CdYbzoRzyPf3HehLHqR3qwfmhV1iA/exec',
 
   /* Panel de administración (admin.html): ID de cliente OAuth de Google.
      Es el mismo valor que va en CLIENT_ID dentro de apps-script/Code.gs. */
