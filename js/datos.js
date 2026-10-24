@@ -51,7 +51,7 @@ const VIDEOS = [
    0 = se muestra [X] hasta que lo completes. Las cifras extra son opcionales: borra las que no tengas. */
 const TRAYECTORIA = {
   desde: 0,
-  historia: '[Cuenta en 2 o 3 líneas cómo empezó el criadero, qué líneas trabajan y qué buscan en cada camada.]',
+  historia: 'RiverBulls nació en [año] por la pasión por el exotic bully. Trabajamos con [líneas o nombres de los padres] y en cada camada buscamos estructura compacta, cabeza amplia y un carácter estable y cariñoso. Para nosotros no es solo vender un cachorro: es encontrarle la familia correcta.',
   cifras: [
     { valor:'[X]', texto:'camadas' },
     { valor:'[X]', texto:'cachorros entregados' },
